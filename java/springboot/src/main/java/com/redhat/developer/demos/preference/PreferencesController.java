@@ -4,12 +4,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+
+import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 public class PreferencesController {
@@ -28,8 +33,9 @@ public class PreferencesController {
     }
 
     @RequestMapping("/")
-    public ResponseEntity<?> getPreferences() {
+    public ResponseEntity<?> getPreferences(@RequestHeader("x-api-key") String key) {
         try {
+            System.out.println(key);
             ResponseEntity<String> responseEntity = restTemplate.getForEntity(remoteURL, String.class);
             String response = responseEntity.getBody();
             return ResponseEntity.ok(String.format(RESPONSE_STRING_FORMAT, response.trim()));
@@ -51,6 +57,12 @@ public class PreferencesController {
             return ex.getStatusCode().getReasonPhrase();
         }
         return responseBody;
+    }
+    @PostConstruct
+    public void addInterceptors() {
+        List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
+        interceptors.add(new RestTemplateInterceptor());
+        restTemplate.setInterceptors(interceptors);
     }
 
 }

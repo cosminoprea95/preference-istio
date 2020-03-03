@@ -21,8 +21,8 @@ public class PreferencesApplication extends WebMvcConfigurerAdapter {
 		return restTemplateBuilder.build();
 	}
 
-	@Bean
-	public io.opentracing.Tracer tracer() {
-		return Configuration.fromEnv().getTracer();
-	}
+//	@Bean
+//	public io.opentracing.Tracer tracer() {
+//		return Configuration.fromEnv().getTracer();
+//	}
 }
