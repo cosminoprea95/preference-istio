@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,13 +38,19 @@ public class PreferencesController {
     @RequestMapping("/")
     public ResponseEntity<?> getPreferences(HttpServletRequest httpServletRequest) {
         try {
+            MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
             Enumeration<String> headerNames = httpServletRequest.getHeaderNames();
             while(headerNames.hasMoreElements()){
                 String headerKey = headerNames.nextElement();
                 System.out.println(headerKey +" -> "+httpServletRequest.getHeader(headerKey));
+                headers.add(headerKey, httpServletRequest.getHeader(headerKey));
             }
-            ResponseEntity<String> responseEntity = restTemplate.getForEntity(remoteURL, String.class);
-            String response = responseEntity.getBody();
+
+            ResponseEntity<String> entity = restTemplate.exchange(
+                    remoteURL, HttpMethod.GET, new HttpEntity<>(headers),
+                    String.class);
+
+            String response = entity.getBody();
             return ResponseEntity.ok(String.format(RESPONSE_STRING_FORMAT, response.trim()));
         } catch (HttpStatusCodeException ex) {
             logger.warn("Exception trying to get the response from recommendation service.", ex);
@@ -63,11 +71,11 @@ public class PreferencesController {
         }
         return responseBody;
     }
-    @PostConstruct
-    public void addInterceptors() {
-        List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
-        interceptors.add(new RestTemplateInterceptor());
-        restTemplate.setInterceptors(interceptors);
-    }
+//    @PostConstruct
+//    public void addInterceptors() {
+//        List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
+//        interceptors.add(new RestTemplateInterceptor());
+//        restTemplate.setInterceptors(interceptors);
+//    }
 
 }
