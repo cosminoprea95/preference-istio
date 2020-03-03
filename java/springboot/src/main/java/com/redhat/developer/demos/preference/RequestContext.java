@@ -9,21 +9,21 @@ public class RequestContext {
 
     public static final String REQUEST_HEADER_NAME = "x-api-key";
 
-//    private static final ThreadLocal<RequestContext> CONTEXT = new ThreadLocal<>();
+    private static final ThreadLocal<RequestContext> CONTEXT = new ThreadLocal<>();
 
     private String token;
 
     private HashMap<String, String> headers;
 
     public static RequestContext getContext() {
-//        RequestContext result = CONTEXT.get();
-//
-//        if (result == null) {
-//            result = new RequestContext();
-//            CONTEXT.set(result);
-//        }
+        RequestContext result = CONTEXT.get();
 
-        return new RequestContext();
+        if (result == null) {
+            result = new RequestContext();
+            CONTEXT.set(result);
+        }
+
+        return result;
     }
 
     public HashMap<String, String> getHeaders() {
