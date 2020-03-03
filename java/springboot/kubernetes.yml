@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: preference
-  namespace: jwt-security
+  namespace: istio-tracing
   labels:
     app: preference
 spec:
@@ -27,7 +27,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: preference
-  namespace: jwt-security
+  namespace: istio-tracing
   labels:
     app: preference    
 spec:
