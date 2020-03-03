@@ -34,7 +34,7 @@ public class PreferencesController {
     }
 
     @RequestMapping("/")
-    public ResponseEntity<?> getPreferences(HttpServletRequest httpServletRequest, @RequestHeader("x-api-key") String key) {
+    public ResponseEntity<?> getPreferences(HttpServletRequest httpServletRequest) {
         try {
             Enumeration<String> headerNames = httpServletRequest.getHeaderNames();
             while(headerNames.hasMoreElements()){
