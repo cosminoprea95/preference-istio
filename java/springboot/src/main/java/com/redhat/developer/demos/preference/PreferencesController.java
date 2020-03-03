@@ -14,6 +14,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Enumeration;
 import java.util.List;
 
 @RestController
@@ -33,9 +34,12 @@ public class PreferencesController {
     }
 
     @RequestMapping("/")
-    public ResponseEntity<?> getPreferences(@RequestHeader("x-api-key") String key) {
+    public ResponseEntity<?> getPreferences(HttpServletRequest httpServletRequest, @RequestHeader("x-api-key") String key) {
         try {
-            System.out.println(key);
+            Enumeration<String> headerNames = httpServletRequest.getHeaderNames();
+            while(headerNames.hasMoreElements()){
+                System.out.println(headerNames.nextElement());
+            }
             ResponseEntity<String> responseEntity = restTemplate.getForEntity(remoteURL, String.class);
             String response = responseEntity.getBody();
             return ResponseEntity.ok(String.format(RESPONSE_STRING_FORMAT, response.trim()));
