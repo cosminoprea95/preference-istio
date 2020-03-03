@@ -38,7 +38,8 @@ public class PreferencesController {
         try {
             Enumeration<String> headerNames = httpServletRequest.getHeaderNames();
             while(headerNames.hasMoreElements()){
-                System.out.println(headerNames.nextElement());
+                String headerKey = headerNames.nextElement();
+                System.out.println(headerKey +" -> "+httpServletRequest.getHeader(headerKey));
             }
             ResponseEntity<String> responseEntity = restTemplate.getForEntity(remoteURL, String.class);
             String response = responseEntity.getBody();
