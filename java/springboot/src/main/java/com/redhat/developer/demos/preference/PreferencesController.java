@@ -39,12 +39,12 @@ public class PreferencesController {
     public ResponseEntity<?> getPreferences(HttpServletRequest httpServletRequest) {
         try {
             MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-            Enumeration<String> headerNames = httpServletRequest.getHeaderNames();
-            while(headerNames.hasMoreElements()){
-                String headerKey = headerNames.nextElement();
-                headers.add(headerKey, httpServletRequest.getHeader(headerKey));
-            }
-
+            String header = httpServletRequest.getHeader("x-api-key");
+//            while(headerNames.hasMoreElements()){
+//                String headerKey = headerNames.nextElement();
+//                headers.add(headerKey, httpServletRequest.getHeader(headerKey));
+//            }
+            headers.add("x-api-key", header);
             ResponseEntity<String> entity = restTemplate.exchange(
                     remoteURL, HttpMethod.GET, new HttpEntity<>(headers),
                     String.class);
