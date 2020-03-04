@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: preference
-  namespace: ionel-ns-2
+  namespace: istio-demo
   labels:
     app: preference
 spec:
@@ -27,7 +27,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: preference
-  namespace: ionel-ns-2
+  namespace: istio-demo
   labels:
     app: preference
 spec:
@@ -36,4 +36,4 @@ spec:
       port: 8080
   selector:
     app: preference
-  type: LoadBalancer
+  type: ClusterIP
