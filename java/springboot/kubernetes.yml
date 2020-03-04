@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: preference
-  namespace: istio-tracing
+  namespace: istio-demo
   labels:
     app: preference
 spec:
@@ -16,23 +16,24 @@ spec:
         app: preference
     spec:
       containers:
-      - name: preference
-        image: gcr.io/cirrus-initial-project/preference:latest
-        ports:
-        - containerPort: 8080
-        imagePullPolicy: Always
+        - name: preference
+          image: gcr.io/cirrus-initial-project/preference:latest
+          ports:
+            - containerPort: 8080
+          imagePullPolicy: Always
+
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: preference
-  namespace: istio-tracing
+  namespace: istio-demo
   labels:
-    app: preference    
+    app: preference
 spec:
   ports:
-  - name: http
-    port: 8080
+    - name: http
+      port: 8080
   selector:
     app: preference
-  type: LoadBalancer
+  type: ClusterIP

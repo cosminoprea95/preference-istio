@@ -16,8 +16,10 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Random;
 
 @RestController
 public class PreferencesController {
@@ -36,7 +38,7 @@ public class PreferencesController {
     }
 
     @RequestMapping("/")
-    public ResponseEntity<?> getPreferences(HttpServletRequest httpServletRequest) {
+    public ResponseEntity<Preference> getPreferences(HttpServletRequest httpServletRequest) {
         try {
             MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
             String header = httpServletRequest.getHeader("x-api-key");
@@ -45,21 +47,27 @@ public class PreferencesController {
 //                headers.add(headerKey, httpServletRequest.getHeader(headerKey));
 //            }
             headers.add("x-api-key", header);
-            ResponseEntity<String> entity = restTemplate.exchange(
+            ResponseEntity<Recommendation> entity = restTemplate.exchange(
                     remoteURL, HttpMethod.GET, new HttpEntity<>(headers),
-                    String.class);
+                    Recommendation.class);
 
-            String response = entity.getBody();
-            return ResponseEntity.ok(String.format(RESPONSE_STRING_FORMAT, response.trim()));
+            Recommendation recommendation = entity.getBody();
+
+            Preference preference = new Preference();
+            Random rand = new Random();
+            Integer id = rand.nextInt(1000000);
+            preference.setId(id);
+            preference.setComment("user recommendation");
+            preference.setDate(LocalDate.now().toString());
+            preference.setRecommendation(recommendation);
+
+            return ResponseEntity.ok(preference);
         } catch (HttpStatusCodeException ex) {
             logger.warn("Exception trying to get the response from recommendation service.", ex);
-            return ResponseEntity.status(ex.getRawStatusCode() == HttpStatus.UNAUTHORIZED.value() ? HttpStatus.OK : HttpStatus.SERVICE_UNAVAILABLE)
-                    .body(String.format(RESPONSE_STRING_FORMAT,
-                            String.format("%d %s", ex.getRawStatusCode(), createHttpErrorResponseString(ex))));
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
         } catch (RestClientException ex) {
             logger.warn("Exception trying to get the response from recommendation service.", ex);
-            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
-                    .body(String.format(RESPONSE_STRING_FORMAT, ex.getMessage()));
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
     }
 
